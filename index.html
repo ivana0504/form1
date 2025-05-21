@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Power Platform Survey</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f4f4;
+      padding: 30px;
+    }
+    #surveyContainer {
+      background-color: #fff;
+      max-width: 800px;
+      margin: auto;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/survey-jquery@1.8.44/survey.jquery.min.js"></script>
+  <link href="https://unpkg.com/survey-jquery@1.8.44/modern.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+  <div id="surveyContainer"></div>
+
+  <script>
+    $(document).ready(function () {
+      Survey.StylesManager.applyTheme("modern");
+
+      var surveyJSON = {
+        title: "Document entry form",
+        headerView: "advanced",
+        pages: [
+          {
+            name: "page1",
+            elements: [
+              {
+                type: "dropdown",
+                name: "question1",
+                title: "Client Name",
+                isRequired: true,
+                choices: [
+                  { value: "Item 1", text: "Rara" },
+                  { value: "Item 2", text: "test2" },
+                  { value: "Item 3", text: "test3" }
+                ]
+              },
+              {
+                type: "dropdown",
+                name: "question2",
+                title: "Process",
+                isRequired: true,
+                choices: [
+                  { value: "Item 1", text: "Accounting" },
+                  { value: "Item 2", text: "Payroll" },
+                  { value: "Item 3", text: "SalesTax" }
+                ]
+              },
+              {
+                type: "dropdown",
+                name: "question3",
+                title: "Month",
+                isRequired: true,
+                choices: [
+                  { value: "Item 1", text: "01_2025" },
+                  { value: "Item 2", text: "02_2025" },
+                  { value: "Item 3", text: "03_2025" },
+                  { value: "Item 4", text: "04_2025" },
+                  { value: "Item 5", text: "05_2025" },
+                  { value: "Item 6", text: "06_2025" },
+                  { value: "Item 7", text: "07_2025" },
+                  { value: "Item 8", text: "08_2025" },
+                  { value: "Item 9", text: "09_2025" },
+                  { value: "Item 10", text: "10_2025" },
+                  { value: "Item 11", text: "11_2025" },
+                  { value: "Item 12", text: "12_2025" }
+                ]
+              },
+              {
+                type: "file",
+                name: "question4",
+                title: "Upload file",
+                isRequired: true,
+                storeDataAsText: true,
+                showPreview: true,
+                allowMultiple: true,
+                maxSize: 10240000
+              }
+            ]
+          }
+        ]
+      };
+
+      function sendDataToServer(survey) {
+        const data = survey.data;
+
+        // (Optional) Remap keys
+        const formattedData = {
+          clientName: data.question1,
+          process: data.question2,
+          month: data.question3,
+          attachments: data.question4
+        };
+
+        console.log("The results are: " + JSON.stringify(formattedData));
+
+        $.ajax({
+          url: 'https://prod-137.westeurope.logic.azure.com:443/workflows/...',
+          type: 'POST',
+          dataType: 'json',
+          contentType: 'application/json',
+          data: JSON.stringify(formattedData),
+          success: function (response) {
+            alert("Submission successful!");
+            console.log(response);
+          },
+          error: function (xhr, status, error) {
+            alert("Submission failed: " + error);
+            console.error(error);
+          }
+        });
+      }
+
+      var survey = new Survey.Model(surveyJSON);
+      $("#surveyContainer").Survey({
+        model: survey,
+        onComplete: sendDataToServer
+      });
+    });
+  </script>
+</body>
+</html>
