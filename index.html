@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Document Entry Form</title>
+  <title>Client Submission Form</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -30,21 +30,16 @@
       Survey.StylesManager.applyTheme("modern");
 
       var surveyJSON = {
-        title: "Document Entry Form",
+        title: "Client Submission Form",
         pages: [
           {
             name: "page1",
             elements: [
               {
-                type: "dropdown",
+                type: "text",
                 name: "question1",
                 title: "Client Name",
-                isRequired: true,
-                choices: [
-                  { value: "Item 1", text: "Rara" },
-                  { value: "Item 2", text: "test2" },
-                  { value: "Item 3", text: "test3" }
-                ]
+                isRequired: true
               },
               {
                 type: "dropdown",
@@ -52,9 +47,9 @@
                 title: "Process",
                 isRequired: true,
                 choices: [
-                  { value: "Item 1", text: "Accounting" },
-                  { value: "Item 2", text: "Payroll" },
-                  { value: "Item 3", text: "SalesTax" }
+                  { value: "Accounting", text: "Accounting" },
+                  { value: "Payroll", text: "Payroll" },
+                  { value: "SalesTax", text: "SalesTax" }
                 ]
               },
               {
@@ -63,11 +58,11 @@
                 title: "Month",
                 isRequired: true,
                 choices: [
-                  { value: "Item 1", text: "01_2025" },
-                  { value: "Item 2", text: "02_2025" },
-                  { value: "Item 3", text: "03_2025" },
-                  { value: "Item 4", text: "04_2025" },
-                  { value: "Item 5", text: "05_2025" }
+                  { value: "01_2025", text: "01_2025" },
+                  { value: "02_2025", text: "02_2025" },
+                  { value: "03_2025", text: "03_2025" },
+                  { value: "04_2025", text: "04_2025" },
+                  { value: "05_2025", text: "05_2025" }
                 ]
               },
               {
@@ -79,6 +74,13 @@
                 showPreview: true,
                 allowMultiple: true,
                 maxSize: 10240000
+              },
+              {
+                type: "comment",
+                name: "question5",
+                title: "Additional Comments",
+                placeholder: "Enter any additional notes or information here...",
+                rows: 4
               }
             ]
           }
@@ -92,7 +94,8 @@
           clientName: data.question1,
           process: data.question2,
           month: data.question3,
-          attachments: data.question4
+          attachments: data.question4,
+          comments: data.question5
         };
 
         console.log("Sending to Power Automate:", formattedData);
@@ -100,7 +103,7 @@
         $.ajax({
           url: 'https://prod-112.westus.logic.azure.com:443/workflows/9d7a2c04b2a24286a0c45f48696ba997/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=ZuqGHPE675za5IYsx7z4EmpXl4IH8GeJO9N_l4Uektw',
           type: 'POST',
-          dataType: 'text', // <- izbjegava JSON parsing grešku
+          dataType: 'text',
           contentType: 'application/json',
           data: JSON.stringify(formattedData),
           success: function (response) {
@@ -114,13 +117,19 @@
         });
       }
 
-      var survey = new Survey.Model(surveyJSON);
+      const survey = new Survey.Model(surveyJSON);
       $("#surveyContainer").Survey({
         model: survey,
         onComplete: sendDataToServer
       });
+
+      // ✅ Auto-populate client name from URL (e.g. ?client=Rara)
+      const urlParams = new URLSearchParams(window.location.search);
+      const clientFromUrl = urlParams.get("client");
+      if (clientFromUrl) {
+        survey.setValue("question1", clientFromUrl);
+      }
     });
   </script>
 </body>
 </html>
-
