@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Power Platform Survey</title>
+  <title>Document Entry Form</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -30,8 +30,7 @@
       Survey.StylesManager.applyTheme("modern");
 
       var surveyJSON = {
-        title: "Document entry form",
-        headerView: "advanced",
+        title: "Document Entry Form",
         pages: [
           {
             name: "page1",
@@ -68,14 +67,7 @@
                   { value: "Item 2", text: "02_2025" },
                   { value: "Item 3", text: "03_2025" },
                   { value: "Item 4", text: "04_2025" },
-                  { value: "Item 5", text: "05_2025" },
-                  { value: "Item 6", text: "06_2025" },
-                  { value: "Item 7", text: "07_2025" },
-                  { value: "Item 8", text: "08_2025" },
-                  { value: "Item 9", text: "09_2025" },
-                  { value: "Item 10", text: "10_2025" },
-                  { value: "Item 11", text: "11_2025" },
-                  { value: "Item 12", text: "12_2025" }
+                  { value: "Item 5", text: "05_2025" }
                 ]
               },
               {
@@ -96,7 +88,6 @@
       function sendDataToServer(survey) {
         const data = survey.data;
 
-        // (Optional) Remap keys
         const formattedData = {
           clientName: data.question1,
           process: data.question2,
@@ -104,21 +95,21 @@
           attachments: data.question4
         };
 
-        console.log("The results are: " + JSON.stringify(formattedData));
+        console.log("Sending to Power Automate:", formattedData);
 
         $.ajax({
-          url: 'https://prod-137.westeurope.logic.azure.com:443/workflows/...',
+          url: 'https://prod-112.westus.logic.azure.com:443/workflows/9d7a2c04b2a24286a0c45f48696ba997/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=ZuqGHPE675za5IYsx7z4EmpXl4IH8GeJO9N_l4Uektw',
           type: 'POST',
-          dataType: 'json',
+          dataType: 'text', // <- izbjegava JSON parsing grešku
           contentType: 'application/json',
           data: JSON.stringify(formattedData),
           success: function (response) {
             alert("Submission successful!");
-            console.log(response);
+            console.log("Response:", response);
           },
           error: function (xhr, status, error) {
             alert("Submission failed: " + error);
-            console.error(error);
+            console.error("Error:", error);
           }
         });
       }
@@ -132,3 +123,4 @@
   </script>
 </body>
 </html>
+
