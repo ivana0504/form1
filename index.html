@@ -44,7 +44,7 @@
               {
                 type: "dropdown",
                 name: "question2",
-                title: "Service",
+                title: "Process",
                 isRequired: true,
                 choices: [
                   { value: "Accounting", text: "Accounting" },
@@ -54,16 +54,32 @@
               },
               {
                 type: "dropdown",
-                name: "question3",
+                name: "question3_dropdown",
                 title: "Month",
                 isRequired: true,
                 choices: [
-                  { value: "01_2025", text: "01_2025" },
-                  { value: "02_2025", text: "02_2025" },
-                  { value: "03_2025", text: "03_2025" },
-                  { value: "04_2025", text: "04_2025" },
-                  { value: "05_2025", text: "05_2025" }
-                ]
+                  "01_2025",
+                  "02_2025",
+                  "03_2025",
+                  "04_2025",
+                  "05_2025",
+                  "06_2025",
+                  "07_2025",
+                  "08_2025",
+                  "09_2025",
+                  "10_2025",
+                  "11_2025",
+                  "12_2025"
+                ],
+                visibleIf: "{question2} != 'Payroll'"
+              },
+              {
+                type: "text",
+                name: "question3_date",
+                title: "Select Date",
+                inputType: "date",
+                isRequired: true,
+                visibleIf: "{question2} = 'Payroll'"
               },
               {
                 type: "file",
@@ -93,7 +109,7 @@
         const formattedData = {
           clientName: data.question1,
           process: data.question2,
-          month: data.question3,
+          month: data.question2 === "Payroll" ? data.question3_date : data.question3_dropdown,
           attachments: data.question4,
           comments: data.question5
         };
